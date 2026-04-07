@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude 사용량 대시보드</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-inner">
+                <div class="header-brand">
+                    <span class="header-logo">◆</span>
+                    <h1>Claude 사용량 대시보드</h1>
+                </div>
+                <div class="header-meta">
+                    <span class="model-badge">claude-opus-4-6</span>
+                    <span class="live-dot" id="liveIndicator" title="실시간 연결 상태"></span>
+                    <span class="live-label" id="liveLabel">연결 중...</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <!-- Summary Cards -->
+            <section class="cards">
+                <div class="card">
+                    <div class="card-icon">📨</div>
+                    <div class="card-body">
+                        <div class="card-value" id="totalRequests">0</div>
+                        <div class="card-label">총 요청 수</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📥</div>
+                    <div class="card-body">
+                        <div class="card-value" id="totalInput">0</div>
+                        <div class="card-label">입력 토큰</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📤</div>
+                    <div class="card-body">
+                        <div class="card-value" id="totalOutput">0</div>
+                        <div class="card-label">출력 토큰</div>
+                    </div>
+                </div>
+                <div class="card card-cost">
+                    <div class="card-icon">💰</div>
+                    <div class="card-body">
+                        <div class="card-value" id="totalCost">$0.000000</div>
+                        <div class="card-label">예상 비용 (USD)</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Charts + Test Panel -->
+            <section class="content-grid">
+                <!-- Token Usage Chart -->
+                <div class="panel chart-panel">
+                    <div class="panel-header">
+                        <h2>토큰 사용량 추이</h2>
+                        <span class="panel-sub">최근 20건</span>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="tokenChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Test Panel -->
+                <div class="panel test-panel">
+                    <div class="panel-header">
+                        <h2>Claude 테스트</h2>
+                        <span class="panel-sub">직접 메시지 전송</span>
+                    </div>
+                    <div class="test-form">
+                        <div class="form-group">
+                            <label>모델</label>
+                            <select id="modelSelect">
+                                <option value="claude-opus-4-6">claude-opus-4-6</option>
+                                <option value="claude-sonnet-4-6">claude-sonnet-4-6</option>
+                                <option value="claude-haiku-4-5">claude-haiku-4-5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>최대 토큰</label>
+                            <input type="number" id="maxTokens" value="512" min="1" max="4096">
+                        </div>
+                        <div class="form-group">
+                            <label>프롬프트</label>
+                            <textarea id="promptInput" rows="4" placeholder="Claude에게 보낼 메시지를 입력하세요..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="sendBtn">전송</button>
+                            <button class="btn btn-secondary" id="resetBtn">초기화</button>
+                        </div>
+                        <div class="response-box" id="responseBox" style="display:none">
+                            <div class="response-meta" id="responseMeta"></div>
+                            <div class="response-text" id="responseText"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Calls Table -->
+            <section class="panel table-panel">
+                <div class="panel-header">
+                    <h2>최근 API 호출</h2>
+                    <span class="panel-sub" id="callCount">0건</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="calls-table">
+                        <thead>
+                            <tr>
+                                <th>시간</th>
+                                <th>프롬프트 미리보기</th>
+                                <th>모델</th>
+                                <th>입력</th>
+                                <th>출력</th>
+                                <th>캐시 읽기</th>
+                                <th>비용</th>
+                                <th>응답 시간</th>
+                                <th>상태</th>
+                            </tr>
+                        </thead>
+                        <tbody id="callsTableBody">
+                            <tr class="empty-row">
+                                <td colspan="9">아직 API 호출이 없습니다. 위에서 테스트해보세요.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Toast Notification -->
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
